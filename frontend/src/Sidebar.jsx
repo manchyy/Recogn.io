@@ -8,8 +8,6 @@ import {
   ListItemIcon,
   ListItemText
 } from '@suid/material'
-import useTheme from "@suid/material/styles/useTheme";
-
 import HomeOutlinedIcon from '@suid/icons-material/HomeOutlined';
 import AccountTreeOutlinedIcon from '@suid/icons-material/AccountTreeOutlined';
 import GroupsOutlinedIcon from '@suid/icons-material/GroupsOutlined';
@@ -19,13 +17,11 @@ import HelpOutlineOutlinedIcon from '@suid/icons-material/HelpOutlineOutlined';
 import LogoutOutlinedIcon from '@suid/icons-material/LogoutOutlined';
 
 function Sidebar() {
-    const theme = useTheme();
     return (
       <div class={styles.sidebar}>
-        
 
         <List>
-            <ListItem>
+            <ListItem disablePadding>
                 <ListItemButton>
                     <ListItemIcon>
                         <HomeOutlinedIcon 
@@ -37,8 +33,7 @@ function Sidebar() {
                     <ListItemText primary="Home" />
                 </ListItemButton>
             </ListItem>
-            <Divider light/>
-            <ListItem>
+            <ListItem disablePadding>
                 <ListItemButton>
                     <ListItemIcon>
                       <AccountTreeOutlinedIcon 
@@ -48,7 +43,7 @@ function Sidebar() {
                     <ListItemText primary="Projects" />
                 </ListItemButton>
             </ListItem>
-            <ListItem>
+            <ListItem disablePadding>
                 <ListItemButton>
                     <ListItemIcon>
                       <GroupsOutlinedIcon 
@@ -60,9 +55,13 @@ function Sidebar() {
             </ListItem>
 
             {/*  */}
-            <hr></hr>
+            <Divider sx={{backgroundColor:'white',
+                          marginLeft:'1.5rem',
+                          marginRight:'1.5rem',
+                          marginTop:'1rem',
+                          marginBottom:'1rem'}} />
 
-            <ListItem>
+            <ListItem disabled disablePadding>
                 <ListItemButton>
                     <ListItemIcon>
                       <StorageOutlinedIcon 
@@ -72,7 +71,7 @@ function Sidebar() {
                     <ListItemText primary="Database" />
                 </ListItemButton>
             </ListItem>
-            <ListItem>
+            <ListItem disablePadding> 
                 <ListItemButton>
                     <ListItemIcon>
                       <DnsOutlinedIcon 
@@ -84,10 +83,13 @@ function Sidebar() {
             </ListItem>
 
             {/*  */}
-            <hr></hr>
-            <Divider />
-            
-            <ListItem>
+            <Divider sx={{backgroundColor:'white',
+                          marginLeft:'1.5rem',
+                          marginRight:'1.5rem',
+                          marginTop:'1rem',
+                          marginBottom:'1rem'}} />
+
+            <ListItem disablePadding>
                 <ListItemButton>
                     <ListItemIcon>
                         <HelpOutlineOutlinedIcon 
@@ -99,7 +101,7 @@ function Sidebar() {
                     <ListItemText primary="Information" />
                 </ListItemButton>
             </ListItem>
-            <ListItem>
+            <ListItem disablePadding>
                 <ListItemButton>
                     <ListItemIcon>
                       <LogoutOutlinedIcon 
@@ -109,7 +111,6 @@ function Sidebar() {
                     <ListItemText primary="Log Out" />
                 </ListItemButton>
               </ListItem>
-
         </List>
       </div>
     );
