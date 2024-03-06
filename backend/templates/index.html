@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Video Stream</title>
+    <style>
+        #video-container {
+            margin: auto;
+            width: 50%;
+            height: 50%;
+            overflow: hidden;
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+        }
+        #text {
+            font-size: 100px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="text">
+        <h1>backend relay</h1>
+    </div>
+    <div id="video-container">
+        <img id="video" src="{{ url_for('video_feed') }}" alt="Video Stream">
+    </div>
+</body>
+</html>
