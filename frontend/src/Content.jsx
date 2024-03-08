@@ -1,5 +1,5 @@
 import styles from './App.module.css';
-import { Divider } from '@suid/material';
+import { Divider, Typography } from '@suid/material';
 import { 
     Table,
     TableBody,
@@ -59,9 +59,9 @@ const [options] = createSignal({
 function Content() {
     return (
         <div class={styles.content}>
+            <Typography variant='h4'>Backend Relay</Typography>
             <VideoFeed/>
-            <Divider sx={{width:'100%', backgroundColor:'white'}} />
-            <p>a</p>
+            <Divider sx={{width:'100%', backgroundColor:'white', marginTop:'5px', marginBottom:'5px'}} />
 
             <SolidApexCharts width="300" type="bar" options={options()} series={series()} />
 

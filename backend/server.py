@@ -16,10 +16,13 @@ client = MongoClient(uri)
 db = client['demo']
 collection = db['data']
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+face_path = os.path.join(script_dir, 'models', 'face-detection-retail-0005.xml')
+age_gender_path = os.path.join(script_dir, 'models', 'age-gender-recognition-retail-0013.xml')
 core = Core() #init openvino
-detection_model_xml = "/Users/macbook/Desktop/FYP-Openvino/backend/models/face-detection-retail-0005.xml"
+detection_model_xml = face_path
 detection_model = core.read_model(model=detection_model_xml)
-age_gender_model_xml = "/Users/macbook/Desktop/FYP-Openvino/backend/models/zalupa/zalupa2/age-gender-recognition-retail-0013.xml"
+age_gender_model_xml = age_gender_path
 age_gender_model = core.read_model(model=age_gender_model_xml)
 device = "CPU"
 
@@ -66,7 +69,8 @@ def gen_frames():
                 # crop detected face from frame and prepare it as input for age-gender model
                 #1,3,62,62 in 1,C,H,W format
                 face = frame[ymin:ymax, xmin:xmax]
-                face_input = cv2.resize(face, (input_layer_age_gender.shape[2], input_layer_age_gender.shape[3]))
+                if face is not None: #possible crash fix?
+                    face_input = cv2.resize(face, (input_layer_age_gender.shape[2], input_layer_age_gender.shape[3])) 
                 face_input = face_input.transpose((2, 0, 1)).reshape(1, 3, input_layer_age_gender.shape[2], input_layer_age_gender.shape[3]) # Model requires [1,3,H,W]
                 #print("Input width", input_layer_age_gender.shape[2])
                 #print("Input height", input_layer_age_gender.shape[3])
