@@ -99,29 +99,33 @@ def gen_frames():
                 gender_output = age_gender_request.get_output_tensor(output_layer_gender.index).data  # Get the output tensor for gender
                 predicted_gender = "Female" if gender_output[0][0] > gender_output[0][1] else "Male"        
 
-                cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), (255,255,255), 10)
+
+                #blurring the face
+                roi = frame[ymin:ymax, xmin:xmax]
+                blurred_roi = cv2.GaussianBlur(roi, (155, 155), 0)
+                frame[ymin:ymax, xmin:xmax] = blurred_roi
+                # Draw the rectangle on the frame
+                cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (255, 255, 255), 10)
                 cv2.putText(frame, f"Age: {predicted_age:.1f}, Gender: {predicted_gender}", (xmin, ymin - 5), cv2.FONT_HERSHEY_TRIPLEX, 2, (0, 0, 255), 2)
             
-                #cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), (255,255,255), 10)
-                #cv2.putText(frame, "face", (xmin,ymin-5), cv2.FONT_HERSHEY_TRIPLEX, 2, (0,0,255), 2)
                 metrics.update(start_time, frame)
 
-                if elapsed_time >= 5 and not data_recorded: #i more than 5 seconds have passed and data is not recorded
-                    #TODO recording data
-                    if no_face_start_time is None: #if a face isnt detected, start recording time
-                        no_face_start_time = perf_counter()
-                    else: #if a person is already out of the frame count how long have they been out
-                        no_face_start_time = perf_counter() - no_face_start_time
-                        if no_face_start_time >= 1: #if theyve been out for x seconds record data
-                            record_person(
-                                {
-                                    "date": datetime.now(),
-                                    "gender": predicted_gender,
-                                    "age": predicted_age,
-                                    "timeWatched": elapsed_time
-                                }
-                            )
-                            print('Data recorded about the person and sent to DB!')
+                # if elapsed_time >= 5 and not data_recorded: #i more than 5 seconds have passed and data is not recorded
+                #     #TODO recording data
+                #     if no_face_start_time is None: #if a face isnt detected, start recording time
+                #         no_face_start_time = perf_counter()
+                #     else: #if a person is already out of the frame count how long have they been out
+                #         no_face_start_time = perf_counter() - no_face_start_time
+                #         if no_face_start_time >= 1: #if theyve been out for x seconds record data
+                #             record_person(
+                #                 {
+                #                     "date": datetime.now(),
+                #                     "gender": predicted_gender,
+                #                     "age": predicted_age,
+                #                     "timeWatched": elapsed_time
+                #                 }
+                #             )
+                #             print('Data recorded about the person and sent to DB!')
 
         ret, buffer = cv2.imencode('.jpg', frame)
         frame = buffer.tobytes()
