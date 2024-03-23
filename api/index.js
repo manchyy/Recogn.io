@@ -22,6 +22,8 @@ mongoose.connect(process.env.MONGO_URI)
         console.log(error)
     })
 
+//db = demo, collection = data
+
 //define schema
 const personSchema = new mongoose.Schema({
     date: String,
@@ -31,7 +33,6 @@ const personSchema = new mongoose.Schema({
 }, {
     collection: 'data'
 })
-//db = demo, collection = data
 const Person = mongoose.model('Person', personSchema)
 
 // test insert of data

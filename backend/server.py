@@ -87,8 +87,6 @@ def gen_frames():
                 if face is not None: #possible crash fix?
                     face_input = cv2.resize(face, (input_layer_age_gender.shape[2], input_layer_age_gender.shape[3])) 
                 face_input = face_input.transpose((2, 0, 1)).reshape(1, 3, input_layer_age_gender.shape[2], input_layer_age_gender.shape[3]) # Model requires [1,3,H,W]
-                #print("Input width", input_layer_age_gender.shape[2])
-                #print("Input height", input_layer_age_gender.shape[3])
 
                 # get the age and gender prediction
                 age_gender_request = age_model.create_infer_request()
@@ -110,6 +108,7 @@ def gen_frames():
             
                 metrics.update(start_time, frame)
 
+                #data recording method, must be rewritten in the near future
                 # if elapsed_time >= 5 and not data_recorded: #i more than 5 seconds have passed and data is not recorded
                 #     #TODO recording data
                 #     if no_face_start_time is None: #if a face isnt detected, start recording time
@@ -132,7 +131,6 @@ def gen_frames():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-#method for pushing recorded data into the database
 def record_person(person_info):
     collection.insert_one(person_info)
 
