@@ -118,7 +118,7 @@ def gen_frames():
                 #         if no_face_start_time >= 1: #if theyve been out for x seconds record data
                 #             record_person(
                 #                 {
-                #                     "date": datetime.now(),
+                #                     "date": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                 #                     "gender": predicted_gender,
                 #                     "age": predicted_age,
                 #                     "timeWatched": elapsed_time
