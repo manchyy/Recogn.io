@@ -8,6 +8,7 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
 from datetime import datetime
+import threading
 
 app = Flask(__name__)
 load_dotenv()
@@ -51,9 +52,11 @@ N,C,H,W = input_layer.shape
 metrics = PerformanceMetrics()
 
 def gen_frames():
-    face_detection_start_time = None
+    last_detection_time = None
     data_recorded = False
-    no_face_start_time = None
+    display_text = False
+    display_text_start_time = None
+
     while True:
         success, frame = cap.read()
         if not success:
@@ -66,20 +69,26 @@ def gen_frames():
         result = request.get_output_tensor(output_layer.index).data
         bboxes = []
         frame_height, frame_width = frame.shape[:2]
+
+        face_detected = False
         for detection in result[0][0]:
             label = int(detection[1])
             conf = float(detection[2])
-            if conf > 0.76:
+                    
+            #DETECTION OCCURING
+            if conf > 0.76: 
                 xmin = int(detection[3] * frame_width)
                 ymin = int(detection[4] * frame_height)
                 xmax = int(detection[5] * frame_width)
                 ymax = int(detection[6] * frame_height)
                 bboxes.append([xmin, ymin, xmax,ymax])
 
-                if face_detection_start_time is None: 
-                    face_detection_start_time = perf_counter()
-                elapsed_time = perf_counter() - face_detection_start_time
-                
+
+                # if last_detection_time is None:
+                #     last_detection_time = perf_counter()
+                last_detection_time = perf_counter()
+                face_detected = True
+                elapsed_time = perf_counter() - last_detection_time
 
                 # crop detected face from frame and prepare it as input for age-gender model
                 #1,3,62,62 in 1,C,H,W format
@@ -97,7 +106,6 @@ def gen_frames():
                 gender_output = age_gender_request.get_output_tensor(output_layer_gender.index).data  # Get the output tensor for gender
                 predicted_gender = "Female" if gender_output[0][0] > gender_output[0][1] else "Male"        
 
-
                 #blurring the face
                 roi = frame[ymin:ymax, xmin:xmax]
                 blurred_roi = cv2.GaussianBlur(roi, (155, 155), 0)
@@ -105,26 +113,38 @@ def gen_frames():
                 # Draw the rectangle on the frame
                 cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (255, 255, 255), 10)
                 cv2.putText(frame, f"Age: {predicted_age:.1f}, Gender: {predicted_gender}", (xmin, ymin - 5), cv2.FONT_HERSHEY_TRIPLEX, 2, (0, 0, 255), 2)
-            
-                metrics.update(start_time, frame)
+                data_recorded = False
 
-                #data recording method, must be rewritten in the near future
-                # if elapsed_time >= 5 and not data_recorded: #i more than 5 seconds have passed and data is not recorded
-                #     #TODO recording data
-                #     if no_face_start_time is None: #if a face isnt detected, start recording time
-                #         no_face_start_time = perf_counter()
-                #     else: #if a person is already out of the frame count how long have they been out
-                #         no_face_start_time = perf_counter() - no_face_start_time
-                #         if no_face_start_time >= 1: #if theyve been out for x seconds record data
-                #             record_person(
-                #                 {
-                #                     "date": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                #                     "gender": predicted_gender,
-                #                     "age": predicted_age,
-                #                     "timeWatched": elapsed_time
-                #                 }
-                #             )
-                #             print('Data recorded about the person and sent to DB!')
+
+            metrics.update(start_time, frame)
+
+        #counting 5 seconds when person is not detected, recording data after
+        if face_detected is not True:
+            if last_detection_time is not None and perf_counter() - last_detection_time >= 5:
+                if data_recorded is not True:
+                    data_recorded = True
+                    #debug purposes, print to console
+                    print('date: ',datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                    print('gender: ',predicted_gender)
+                    print('age: ',predicted_age)
+                    print('timeWatched: ',last_detection_time-5)
+                    record_person(
+                        {
+                            "date": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                            "gender": predicted_gender,
+                            "age": predicted_age,
+                            "timeWatched": last_detection_time-5
+                        }
+                    )
+
+                    display_text = True
+                    display_text_start_time = perf_counter()
+
+        #notification text to inform when data is recorded
+        if display_text:
+            cv2.putText(frame, "Data Recorded", (150, 150), cv2.FONT_HERSHEY_TRIPLEX, 5, (0, 0, 255), 2)
+            if perf_counter() - display_text_start_time > 2:
+                display_text = False
 
         ret, buffer = cv2.imencode('.jpg', frame)
         frame = buffer.tobytes()
@@ -133,6 +153,7 @@ def gen_frames():
 
 def record_person(person_info):
     collection.insert_one(person_info)
+    print('person recorded!')
 
 @app.route('/')
 def index():
