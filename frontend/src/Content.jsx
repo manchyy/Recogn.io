@@ -159,10 +159,10 @@ const DataFetcher = () => {
         mode: 'dark',
         palette: 'palette3',
         monochrome: {
-            enabled: false,
+            enabled: true,
             color: '#49CAE4',
             shadeTo: 'light',
-            shadeIntensity: 0.65
+            shadeIntensity: 1
         },
     }
     const chartTooltip = {
@@ -177,8 +177,8 @@ const DataFetcher = () => {
                     <CircularProgress />
                 </div>
             ) : (
-                <div>
-                    <Typography variant='h3'>Backend Relay</Typography>
+                <div class={styles.bybys}>
+                    <Typography variant='h3' sx={{my:5}}>Backend Relay</Typography>
                     <div class={styles.cameradata}>
                         <VideoFeed/>
                         <div class={styles.rawdata}>
@@ -224,7 +224,7 @@ const DataFetcher = () => {
                         </div>
                     </div>
 
-                    <Typography variant='h3'>Data Visualization</Typography>
+                    <Typography variant='h3'  sx={{my:5}}>Data Visualization</Typography>
                     {/* gender distribution chart */}
                     <div class='apexcharts-canvas'>
                         <SolidApexCharts 
