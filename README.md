@@ -1,13 +1,14 @@
-![image](https://cdn.discordapp.com/attachments/224221503544229888/1215006976564797501/logo.png?ex=65fb2e6c&is=65e8b96c&hm=a593aa5fe01872f4749057ee7f0feb840109611fa34954c5038c31828731a7ce&)
-
+![image](./frontend/src/assets/logo.svg)
 ## What is Recogn.io?
 
-Fullstack project which Uses Intel's OpenVINO pretrained models to detect faces and draw metrics from them. The data then is presented in an easy-to-understand model through charts in the portal. 
+Fullstack project which Uses Intel's OpenVINO pretrained models to detect faces and draw metrics from them. The data is presented in an easy-to-understand model through charts in the portal. 
 
 ## Technologies used
 Frontend - SolidJS
 
 Backend - Flask
+
+API - ExpressJS
 
 Database - MongoDB
 
@@ -20,3 +21,7 @@ Database - MongoDB
 **Backend**
 - CD to backend folder
 - run `server.py`
+
+**API**
+- CD to api folder
+- run `index.js`
