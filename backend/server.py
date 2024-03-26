@@ -112,7 +112,7 @@ def gen_frames():
                 frame[ymin:ymax, xmin:xmax] = blurred_roi
                 # Draw the rectangle on the frame
                 cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (255, 255, 255), 10)
-                cv2.putText(frame, f"Age: {predicted_age:.1f}, Gender: {predicted_gender}", (xmin, ymin - 5), cv2.FONT_HERSHEY_TRIPLEX, 2, (0, 0, 255), 2)
+                cv2.putText(frame, f"Age: {round(predicted_age)}, Gender: {predicted_gender}", (xmin, ymin - 5), cv2.FONT_HERSHEY_TRIPLEX, 2, (0, 0, 255), 2)
                 data_recorded = False
 
 
@@ -126,14 +126,14 @@ def gen_frames():
                     #debug purposes, print to console
                     print('date: ',datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
                     print('gender: ',predicted_gender)
-                    print('age: ',predicted_age)
-                    print('timeWatched: ',last_detection_time-5)
+                    print('age: ',round(predicted_age))
+                    print('timeWatched: ',round(last_detection_time-5))
                     record_person(
                         {
                             "date": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                             "gender": predicted_gender,
-                            "age": predicted_age,
-                            "timeWatched": last_detection_time-5
+                            "age": round(predicted_age),
+                            "timeWatched": round(last_detection_time-5)
                         }
                     )
 

@@ -12,6 +12,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  z-index: 10000;
 }
 /* NAVBAR */
 .navbar {
@@ -87,16 +88,32 @@
 .content {
   background-color: #08171A;
   color: white;
-  padding: 30px;
+  /* padding: 30px; */
   flex: 1;
   margin-top: 100px;
-  margin-left: 100px;
+  margin-left: 20%;
+  margin-right: 5%;
   margin-bottom: 15px;
   border-radius: 25px;
-  width: 1000px;
+  width: 80%;
 }
 
 /*  */
 .link {
   color: #b318f0;
+}
+
+.rawdata {
+  /* border: 1px solid white; */
+  width: 30rem;
+}
+
+.cameradata {
+  display: flex;
+  flex-wrap: wrap;
+  overflow-x: auto;
+  white-space: nowrap;
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 2rem;
 }

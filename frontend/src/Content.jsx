@@ -1,24 +1,29 @@
 import styles from './App.module.css';
-import { Divider, Typography } from '@suid/material';
+import './ChartStyles.css'
+import { Divider, ListItemText, Typography } from '@suid/material';
 import { 
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableFooter,
-    TableHead,
-    TableRow,
+    List,
+    ListItem,
+    ListItemIcon,
+    CircularProgress
   } from "@suid/material"
+import Box from "@suid/material/Box"
 import { createEffect, mapArray } from 'solid-js';
 import { SolidApexCharts } from 'solid-apexcharts';
 import { createSignal, onMount, createResource } from 'solid-js';
+import { red } from '@suid/material/colors';
+import { VideocamOff} from '@suid/icons-material';
+import ManIcon from '@suid/icons-material/Man';
+import AccessTimeIcon from '@suid/icons-material/AccessTime';
+import WomanIcon from '@suid/icons-material/Woman';
+import { color } from '@mui/system';
 
 let videoFeedLink = "http://127.0.0.1:5000/video_feed"
 function VideoFeed() {
   return(
   <img 
   src={videoFeedLink}
-  style={{ width: '400px', height: '300px'}} 
+  style={{ width: '600px', height: '280px'}} 
   class={styles.img} 
   alt="video feed">
   </img>
@@ -149,132 +154,206 @@ const DataFetcher = () => {
         // console.log('month activity',monthActivityCollection())
         setLoading(false);
     });
+
+    const chartTheme = {
+        mode: 'dark',
+        palette: 'palette3',
+        monochrome: {
+            enabled: false,
+            color: '#49CAE4',
+            shadeTo: 'light',
+            shadeIntensity: 0.65
+        },
+    }
+    const chartTooltip = {
+        enabled: true,
+        theme: 'dark',
+    }
     
     return (
         <div>
-            <Typography variant="h4">Data</Typography>
             {loading() ? (
-                <div>Loading...</div>
+                <div>
+                    <CircularProgress />
+                </div>
             ) : (
                 <div>
-                    <Typography>Males: {GenderCollection().Male}</Typography>
-                    <Typography>Females: {GenderCollection().Female}</Typography>
-                    <Typography>Total Time Watched - Males: {Math.round(totalTimeWatchedPerGender().Male)} seconds</Typography>
-                    <Typography>Total Time Watched - Females: {Math.round(totalTimeWatchedPerGender().Female)} seconds</Typography>
+                    <Typography variant='h3'>Backend Relay</Typography>
+                    <div class={styles.cameradata}>
+                        <VideoFeed/>
+                        <div class={styles.rawdata}>
 
+                        <Typography variant="h4">Statistics</Typography>
+                        <List>
+                            <ListItem>
+                                <ListItemIcon sx={{color:"white"}}>
+                                    <ManIcon/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={'Male Count: '+GenderCollection().Male}
+                                />
+                            </ListItem>
+                            <ListItem>
+                                <ListItemIcon sx={{color:"white"}}>
+                                    <AccessTimeIcon/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={'Male Time Watched: '+totalTimeWatchedPerGender().Male  + ' seconds'
+                                }
+                                />
+                            </ListItem>
+                            <ListItem>
+                                <ListItemIcon sx={{color:"white"}}>
+                                    <WomanIcon/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={'Female Count: '+GenderCollection().Female}
+                                />
+                            </ListItem>
+                            <ListItem>
+                                <ListItemIcon sx={{color:"white"}}>
+                                    <AccessTimeIcon/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={'Female Time Watched: '+
+                                    totalTimeWatchedPerGender().Female + ' seconds'
+                                    }
+                                />
+                            </ListItem>
+                        </List>
+                        </div>
+                    </div>
+
+                    <Typography variant='h3'>Data Visualization</Typography>
                     {/* gender distribution chart */}
-                    <SolidApexCharts 
-                        width="300" 
-                        type="pie" 
-                        series={[GenderCollection().Male, GenderCollection().Female]}
-                        options= { {
-                            title: {
-                                text: 'Gender Distribution',
-                                align: 'center'
-                            },
-                            labels:['Male','Female']
-                        }}
-                    />
-
-                    {/* gender time watched comparison chart */}
-                    <SolidApexCharts 
-                        width="300" 
-                        type="bar" 
-                        series={[{
-                            name: 'Total Time Watched',
-                            data: [totalTimeWatchedPerGender().Male, totalTimeWatchedPerGender().Female]
-                        }]}
-                        options= { {
-                            title: {
-                                text: 'Time Watched (seconds)',
-                                align: 'center'
-                            },
-                            xaxis: {
-                                categories: ['Male','Female']
-                            }
-                        }}
-                    />
-
-                    <SolidApexCharts 
-                        width="600" 
-                        type="bar" 
-                        series={[{
-                            name: 'People recorded',
-                            data: [
-                                { x: '18-29', y: ageGroupCollection()['18-29'] || 0 },
-                                { x: '30-39', y: ageGroupCollection()['30-39'] || 0 },
-                                { x: '40-49', y: ageGroupCollection()['40-49'] || 0 },
-                                { x: '50-59', y: ageGroupCollection()['50-59'] || 0 },
-                                { x: '60-69', y: ageGroupCollection()['60-69'] || 0 },
-                                { x: '70-79', y: ageGroupCollection()['70-79'] || 0 },
-                                { x: '80+', y: ageGroupCollection()['80+'] || 0 },
-                            ]
-                        }]}
-                        options= {{
-                            xaxis: {
-                                categories: ['18-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80+'],
-                            },
-                            title: {
-                                text: 'Age Group Distribution',
-                                align: 'center'
-                            },
-                            yaxis: {
+                    <div class='apexcharts-canvas'>
+                        <SolidApexCharts 
+                            width="600" 
+                            height="300"
+                            type="pie" 
+                            series={[GenderCollection().Male, GenderCollection().Female]}
+                            options= { {
                                 title: {
-                                    text: 'Count'
-                                }
-                            }
-                        }}
-                    />
+                                    text: 'Gender Distribution',
+                                    align: 'center'
+                                },
+                                labels:['Male','Female'],
+                                theme: chartTheme,
+                                tooltip: chartTooltip,
+                            }}
+                        />
 
-                    <SolidApexCharts 
-                        width="600" 
-                        type="line" 
-                        series={[{
-                            name: 'Activity',
-                            data: [
-                                { x: '2023-01', y: monthActivityCollection().January || 0 },
-                                { x: '2023-02', y: monthActivityCollection().February || 0 },
-                                { x: '2023-03', y: monthActivityCollection().March || 0 },
-                                { x: '2023-04', y: monthActivityCollection().April || 0 },
-                                { x: '2023-05', y: monthActivityCollection().May || 0 },
-                                { x: '2023-06', y: monthActivityCollection().June || 0 },
-                                { x: '2023-07', y: monthActivityCollection().July || 0 },
-                                { x: '2023-08', y: monthActivityCollection().August || 0 },
-                                { x: '2023-09', y: monthActivityCollection().September || 0 },
-                                { x: '2023-10', y: monthActivityCollection().October || 0 },
-                                { x: '2023-11', y: monthActivityCollection().November || 0 },
-                                { x: '2023-12', y: monthActivityCollection().December || 0 },
-                            ]
-                        }]}
-                        options= {{
-                            xaxis: {
-                                type: 'datetime',
-                                categories: [
-                                    '2023-01',
-                                    '2023-02',
-                                    '2023-03',
-                                    '2023-04',
-                                    '2023-05',
-                                    '2023-06',
-                                    '2023-07',
-                                    '2023-08',
-                                    '2023-09',
-                                    '2023-10',
-                                    '2023-11',
-                                    '2023-12',
-                                ],
-                            },
-                            title: {
-                                text: 'Activity per Month',
-                                align: 'center'
-                            },
-                            yaxis: {
+                        {/* gender time watched comparison chart */}
+                        <SolidApexCharts 
+                            width="600" 
+                            type="bar" 
+                            series={[{
+                                name: 'Total Time Watched',
+                                data: [totalTimeWatchedPerGender().Male, totalTimeWatchedPerGender().Female]
+                            }]}
+                            options= { {
                                 title: {
-                                    text: 'Activity Count'
+                                    text: 'Time Watched (seconds)',
+                                    align: 'center',
+                                    style: {
+                                        color: '#FFFFFF'
+                                    }
+                                },
+                                xaxis: {
+                                    categories: ['Male','Female']
+                                },
+                                // colors: ['#', '#49CAE4'],
+                                theme: chartTheme,
+                                tooltip: chartTooltip,
+                            }}
+                        />
+                        {/* age demographic chart */}
+                        <SolidApexCharts 
+                            width="600" 
+                            type="bar" 
+                            series={[{
+                                name: 'People recorded',
+                                data: [
+                                    { x: '18-29', y: ageGroupCollection()['18-29'] || 0 },
+                                    { x: '30-39', y: ageGroupCollection()['30-39'] || 0 },
+                                    { x: '40-49', y: ageGroupCollection()['40-49'] || 0 },
+                                    { x: '50-59', y: ageGroupCollection()['50-59'] || 0 },
+                                    { x: '60-69', y: ageGroupCollection()['60-69'] || 0 },
+                                    { x: '70-79', y: ageGroupCollection()['70-79'] || 0 },
+                                    { x: '80+', y: ageGroupCollection()['80+'] || 0 },
+                                ]
+                            }]}
+                            options= {{
+                                theme: chartTheme,
+                                tooltip: chartTooltip,
+                                xaxis: {
+                                    categories: ['18-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80+'],
+                                },
+                                title: {
+                                    text: 'Age Group Distribution',
+                                    align: 'center'
+                                },
+                                yaxis: {
+                                    title: {
+                                        text: 'Count'
+                                    }
                                 }
-                            }
-                        }}
-                    />
+                            }}
+                        />
+                        
+                        {/* activity per month chart */}
+                        <SolidApexCharts 
+                            width="600" 
+                            type="line" 
+                            series={[{
+                                name: 'Activity',
+                                data: [
+                                    { x: '2023-01', y: monthActivityCollection().January || 0 },
+                                    { x: '2023-02', y: monthActivityCollection().February || 0 },
+                                    { x: '2023-03', y: monthActivityCollection().March || 0 },
+                                    { x: '2023-04', y: monthActivityCollection().April || 0 },
+                                    { x: '2023-05', y: monthActivityCollection().May || 0 },
+                                    { x: '2023-06', y: monthActivityCollection().June || 0 },
+                                    { x: '2023-07', y: monthActivityCollection().July || 0 },
+                                    { x: '2023-08', y: monthActivityCollection().August || 0 },
+                                    { x: '2023-09', y: monthActivityCollection().September || 0 },
+                                    { x: '2023-10', y: monthActivityCollection().October || 0 },
+                                    { x: '2023-11', y: monthActivityCollection().November || 0 },
+                                    { x: '2023-12', y: monthActivityCollection().December || 0 },
+                                ]
+                            }]}
+                            options= {{
+                                theme: chartTheme,
+                                tooltip: chartTooltip,
+                                xaxis: {
+                                    type: 'datetime',
+                                    categories: [
+                                        '2023-01',
+                                        '2023-02',
+                                        '2023-03',
+                                        '2023-04',
+                                        '2023-05',
+                                        '2023-06',
+                                        '2023-07',
+                                        '2023-08',
+                                        '2023-09',
+                                        '2023-10',
+                                        '2023-11',
+                                        '2023-12',
+                                    ],
+                                },
+                                title: {
+                                    text: 'Activity per Month',
+                                    align: 'center'
+                                },
+                                yaxis: {
+                                    title: {
+                                        text: 'Activity Count'
+                                    }
+                                }
+                            }}
+                        />
+                    </div>
 
            
                 </div>
@@ -287,9 +366,11 @@ const DataFetcher = () => {
 function Content() {
     return (
         <div class={styles.content}>
-            <Typography variant='h4'>Backend Relay</Typography>
-            <VideoFeed/>
-            <Divider sx={{width:'100%', backgroundColor:'white', marginTop:'5px', marginBottom:'5px'}} />
+            {/* <Typography variant='h4'>Backend Relay</Typography> */}
+            {/* <VideoFeed/>
+            <Divider 
+            // sx={{width:'80%', backgroundColor:'white', marginTop:'5px', marginBottom:'5px'}}
+             /> */}
             <DataFetcher />
         </div>
     );
