@@ -12,7 +12,6 @@ function App() {
         <Content/>
       </header>
       <Sidebar/>
-      
     </div>
   );
 }

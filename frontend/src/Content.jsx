@@ -1,22 +1,17 @@
 import styles from './App.module.css';
 import './ChartStyles.css'
-import { Divider, ListItemText, Typography } from '@suid/material';
+import { ListItemText, Typography } from '@suid/material';
 import { 
     List,
     ListItem,
     ListItemIcon,
     CircularProgress
   } from "@suid/material"
-import Box from "@suid/material/Box"
-import { createEffect, mapArray } from 'solid-js';
 import { SolidApexCharts } from 'solid-apexcharts';
-import { createSignal, onMount, createResource } from 'solid-js';
-import { red } from '@suid/material/colors';
-import { VideocamOff} from '@suid/icons-material';
+import { createSignal, onMount } from 'solid-js';
 import ManIcon from '@suid/icons-material/Man';
 import AccessTimeIcon from '@suid/icons-material/AccessTime';
 import WomanIcon from '@suid/icons-material/Woman';
-import { color } from '@mui/system';
 
 let videoFeedLink = "http://127.0.0.1:5000/video_feed"
 function VideoFeed() {
@@ -144,14 +139,7 @@ const DataFetcher = () => {
         } catch (error) {
             console.error('Error fetching data:', error);
         }
-
-        //debug
-        // console.log('age', AgeCollection)
-        // console.log('gender count: ',GenderCollection)
-        // console.log('timewatched',totalTimeWatched)
-        // console.log('LOGGING GENDERS ',GenderCollection().Male)
-        // console.log('age Groups',ageGroupCollection())
-        // console.log('month activity',monthActivityCollection())
+        
         setLoading(false);
     });
 
@@ -366,12 +354,7 @@ const DataFetcher = () => {
 function Content() {
     return (
         <div class={styles.content}>
-            {/* <Typography variant='h4'>Backend Relay</Typography> */}
-            {/* <VideoFeed/>
-            <Divider 
-            // sx={{width:'80%', backgroundColor:'white', marginTop:'5px', marginBottom:'5px'}}
-             /> */}
-            <DataFetcher />
+         <DataFetcher />
         </div>
     );
 }

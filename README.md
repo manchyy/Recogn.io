@@ -24,4 +24,5 @@ Database - MongoDB
 
 **API**
 - CD to api folder
-- run `index.js`
+- `npm i` 
+- `npm run dev`

@@ -1,7 +1,6 @@
 import styles from './App.module.css';
 import { 
   Divider,
-  Box,
   List,
   ListItem,
   ListItemButton,
